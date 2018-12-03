@@ -184,18 +184,19 @@ public class Start {
 			break;
 		case "create":
 		{
-			System.out.println("CASE: CREATE TABLE");
-			Operations.parseCreateTable(userCommand);
-//			switch (commandTokens.get(1)) {
-//			case "table":
-//				System.out.println("CASE: CREATE TABLE");
-//				Operations.parseCreateTable(userCommand);
-//				break;
-//			case "index":
-//				System.out.println("CASE: CREATE INDEX");
-//				Operations.parseCreateIndex(userCommand);
-//				break;
-//			}
+//			System.out.println("CASE: CREATE TABLE");
+//			Operations.parseCreateTable(userCommand);
+			switch (commandTokens.get(1)) {
+			
+			case "table":
+				System.out.println("CASE: CREATE TABLE");
+				Operations.parseCreateTable(userCommand);
+				break;
+			case "index":
+				System.out.println("CASE: CREATE INDEX");
+				Operations.parseCreateIndex(userCommand);
+				break;
+			}
 			break;
 		}
 		case "update":

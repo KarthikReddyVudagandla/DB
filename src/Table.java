@@ -312,7 +312,7 @@ public class Table {
 			if (col.column_name.equalsIgnoreCase("row_id")) {
 				continue;
 			}
-			int indx = findIndx(colNames, col.column_name);
+			int indx = getIndex(colNames, col.column_name);
 			if (indx != -1) {
 				dataSize += getDataTypeSize(col.data_type, values[indx].length());
 				dataHeaders[headerPointer++] = (byte) getSTCofDataType(col.data_type, false, values[indx].length());
@@ -324,10 +324,10 @@ public class Table {
 
 		int pageNo = fetchLastPage();
 		// check leaf size
-		byte[] plDataType = new byte[columnDetails.size() - 1];
+		byte[] ColDataType = new byte[columnDetails.size() - 1];
 		String[] dataTypeStr = new String[columnDetails.size()];
 		dataTypes.values().toArray(dataTypeStr);
-		int payLoadSize = getCellSize(values, plDataType, dataTypeStr);
+		int payLoadSize = getCellSize(values, ColDataType, dataTypeStr);
 		payLoadSize = payLoadSize + 6;
 
 		boolean canInsert = canInsert(pageNo, payLoadSize);
@@ -335,12 +335,12 @@ public class Table {
 		if (canInsert) {
 			for(int i=0;i<values.length;i++)
 				System.out.println("values--"+values[i]);
-			Cell cell = createCell(pageNo, fetchNextRowID(), (short) payLoadSize, plDataType, values);
+			Cell cell = createCell(pageNo, fetchNextRowID(), (short) payLoadSize, ColDataType, values);
 			insertRec(pageNo, payLoadSize, cell);
 		} else {
 			int row_id = fetchNextRowID();
 			int pgNum = splitLeafPage(pageNo);
-			Cell cell = createCell(pgNum, row_id, (short) payLoadSize, plDataType, values);
+			Cell cell = createCell(pgNum, row_id, (short) payLoadSize, ColDataType, values);
 			insertRec(pgNum, payLoadSize, cell);
 		}
 	}
@@ -364,22 +364,22 @@ public class Table {
 			dataTypes.put(6, "text");
 		} else
 			return;
-		byte[] plDataType = new byte[noColmns - 1]; //-1 coz row_id is not in pl
+		byte[] ColDataType = new byte[noColmns - 1]; //-1 coz row_id is not in pl
 		String[] dataTypeStr = new String[noColmns];
 		dataTypes.values().toArray(dataTypeStr);
-		int payLoadSize = getCellSize(values, plDataType, dataTypeStr);
+		int payLoadSize = getCellSize(values, ColDataType, dataTypeStr);
 		payLoadSize += 6;
 
 		// change offset calculation??
 		boolean canInsert = canInsert(pageNo, payLoadSize);
 
 		if (canInsert) {
-			Cell cell = createCell(pageNo, fetchNextRowID(), (short) payLoadSize, plDataType, values);
+			Cell cell = createCell(pageNo, fetchNextRowID(), (short) payLoadSize, ColDataType, values);
 			insertRec(pageNo, payLoadSize, cell);
 		} else {
 			int row_id = fetchNextRowID();
 			int pgNum = splitLeafPage(pageNo);
-			Cell cell = createCell(pgNum, row_id, (short) payLoadSize, plDataType, values);
+			Cell cell = createCell(pgNum, row_id, (short) payLoadSize, ColDataType, values);
 			insertRec(pgNum, payLoadSize, cell);
 		}
 	}
@@ -463,7 +463,7 @@ public class Table {
 			if (col.column_name.equalsIgnoreCase("row_id")) {
 				continue;
 			}
-			int indx = findIndx(colNames, col.column_name);
+			int indx = getIndex(colNames, col.column_name);
 			if (indx != -1) {
 				dataSize += getDataTypeSize(col.data_type, data[indx].length());
 				dataHeaders[headerPointer++] = (byte) getSTCofDataType(col.data_type, false, data[indx].length());
@@ -474,20 +474,20 @@ public class Table {
 		}
 
 		// check leaf size
-		byte[] plDataType = new byte[columnDetails.size() - 1];
+		byte[] ColDataType = new byte[columnDetails.size() - 1];
 		String[] dataTypeStr = new String[columnDetails.size()];
 		dataTypes.values().toArray(dataTypeStr);
-		int payLoadSize = getCellSize(data, plDataType, dataTypeStr);
+		int payLoadSize = getCellSize(data, ColDataType, dataTypeStr);
 		payLoadSize = payLoadSize + 6;
 
 		boolean canInsert = canInsert(page, payLoadSize);
 
 		if (canInsert) {
-			Cell cell = createCell(page, row_id, (short) payLoadSize, plDataType, data);
+			Cell cell = createCell(page, row_id, (short) payLoadSize, ColDataType, data);
 			insertRec(page, payLoadSize, cell, location);
 		} else {
 			int pgNum = splitLeafPage(page);
-			Cell cell = createCell(pgNum, row_id, (short) payLoadSize, plDataType, data);
+			Cell cell = createCell(pgNum, row_id, (short) payLoadSize, ColDataType, data);
 			insertRec(pgNum, payLoadSize, cell, location);
 		}
 	}
@@ -508,18 +508,18 @@ public class Table {
 		return cell;
 	} 
 
-	private static int getCellSize(String[] values, byte[] plDataType, String[] dataType) throws Exception {
+	private static int getCellSize(String[] values, byte[] ColDataType, String[] dataType) throws Exception {
 
 		int size = 1 + dataType.length - 1;
 		for (int i = 1; i < values.length; i++) {
-			plDataType[i - 1] = (byte) getSTCofDataType(dataType[i], false, values[i].length());
+			ColDataType[i - 1] = (byte) getSTCofDataType(dataType[i], false, values[i].length());
 			size = size + getDataTypeSize(dataType[i], values[i].length());
 		}
 
 		return size;
 	}
 
-	private int findIndx(String[] columns, String column) {
+	private int getIndex(String[] columns, String column) {
 		for (int i = 0; i < columns.length; i++) {
 			if (column.trim().equalsIgnoreCase(columns[i].trim()))
 				return i;
